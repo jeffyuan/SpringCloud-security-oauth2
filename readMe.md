@@ -5,12 +5,13 @@
 | --------   | -----:   | :----: |
 | springcloud-client     |    3   |   angularjs ,zuul代理  |
 | springcloud-zuul      |   4 |   网关   |
+| springcloud-zuul-sso      |   4 |   网关以及单点登录   |
 | springcloud-oauth2-auth-server        |  1   |   认证服务器    |
 | springcloud-resource-server       |  2 |   资源服务器    |
 | springcloud-oauth2-client     |  5 |   单点登录测试客户端   |
 
 
-2、需要在数据库中创建名为alan-oauth2的数据库 账号密码root/root
+2、需要在数据库中创建名为alan-oauth的数据库 账号密码root/root
 
 
 3、访问路径
