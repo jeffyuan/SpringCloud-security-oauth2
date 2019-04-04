@@ -10,11 +10,13 @@ import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.netflix.zuul.filters.FilterRegistry;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.security.SecurityProperties;
 import org.springframework.boot.autoconfigure.security.oauth2.client.EnableOAuth2Sso;
 import org.springframework.boot.autoconfigure.security.oauth2.resource.UserInfoRestTemplateCustomizer;
+import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
 import org.springframework.cloud.netflix.zuul.EnableZuulProxy;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -29,6 +31,7 @@ import org.springframework.security.web.csrf.CsrfToken;
 import org.springframework.security.web.csrf.CsrfTokenRepository;
 import org.springframework.security.web.csrf.HttpSessionCsrfTokenRepository;
 import org.springframework.security.web.session.SessionManagementFilter;
+import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 import org.springframework.stereotype.Component;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
@@ -39,23 +42,31 @@ import org.springframework.web.util.WebUtils;
 	@SpringBootApplication
 	@EnableZuulProxy
 	@EnableOAuth2Sso
+	@EnableDiscoveryClient
 	public class GatewayApplication {
 
 	    public static void main(String[] args) {
 	        SpringApplication.run(GatewayApplication.class, args);
+
+	        // 结合FixRibbonRoutingFilter使用
+			//removeDefaultRibbonFilter();
 	    }
+
+		private static void removeDefaultRibbonFilter() {
+			//只需要删除系统的ribbonRoutingFilter即可，自定义的会自动注入。
+			 FilterRegistry r=FilterRegistry.instance();
+			 r.remove("ribbonRoutingFilter");
+ 		 }
+
 	    @Bean
 		public SessionRegistry sessionRegistry(){    
 		    return new SessionRegistryImpl();    
 		}
-
-	    
 	    
 	    @Configuration
 		@Order(SecurityProperties.ACCESS_OVERRIDE_ORDER)
 		protected static class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 
-			
 			@Override
 			protected void configure(HttpSecurity http) throws Exception {
 				http
@@ -67,7 +78,7 @@ import org.springframework.web.util.WebUtils;
 					.csrf().csrfTokenRepository(csrfTokenRepository())
 				.and()
 					.addFilterAfter(csrfHeaderFilter(), SessionManagementFilter.class);
-				
+
 				//http.httpBasic().disable();
 			}
 
@@ -108,8 +119,7 @@ import org.springframework.web.util.WebUtils;
 		public void customize(OAuth2RestTemplate template) {
 			template.setInterceptors(new ArrayList<>(template.getInterceptors()));
 		}
-		
-		
+
 		/** 
 	     *  
 	     * attention:简单跨域就是GET，HEAD和POST请求，但是POST请求的"Content-Type"只能是application/x-www-form-urlencoded, multipart/form-data 或 text/plain 

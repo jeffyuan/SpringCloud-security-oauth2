@@ -40,7 +40,7 @@ public class CustomController {
 		map.put("grant_type", request.getRequestParameters().get("grant_type"));
 		map.put("response_type", request.getRequestParameters().get("response_type"));
 		//TODO 需要查询一下要跳转的Client_id配置的回调地址
-		map.put("redirect_uri", "http://127.0.0.1:8080");
+		map.put("redirect_uri", "http://127.0.0.1:8080/ui1");
 		map.put("client_id", clientId);
 		map.put("state", request.getRequestParameters().get("state"));
 		request = new OAuth2Request(map, clientId, request.getAuthorities(), request.isApproved(), request.getScope(),

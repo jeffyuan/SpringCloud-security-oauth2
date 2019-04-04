@@ -67,6 +67,6 @@
 		<module>springcloud-client</module>
 		<module>springcloud-zuul</module>
 		<module>springcloud-oauth2-client</module>
-			<module>springcloud-resource-server</module>
+		<module>springcloud-resource-server</module>
 </modules>
 </project>

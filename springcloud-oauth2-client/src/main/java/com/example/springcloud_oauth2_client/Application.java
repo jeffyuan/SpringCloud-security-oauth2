@@ -14,7 +14,9 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.security.oauth2.client.EnableOAuth2Sso;
+import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
 import org.springframework.cloud.client.loadbalancer.LoadBalanced;
+import org.springframework.cloud.netflix.eureka.EnableEurekaClient;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Primary;
 import org.springframework.core.env.Environment;
@@ -39,9 +41,9 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.databind.util.ISO8601DateFormat;
 
-
 @SpringBootApplication
 @EnableOAuth2Sso
+@EnableDiscoveryClient
 public class Application extends WebSecurityConfigurerAdapter{
 
 	public static void main(String[] args) {
@@ -52,11 +54,13 @@ public class Application extends WebSecurityConfigurerAdapter{
     private String basename;
 	@Autowired
 	OAuth2ClientContext oauth2ClientContext;
+
 	@Bean
 	@LoadBalanced
 	RestTemplate restTemplate() {
 		return new RestTemplate();
 	}
+
 	@Override
 	protected void configure(HttpSecurity http) throws Exception {
 		http.authorizeRequests()
@@ -80,6 +84,7 @@ public class Application extends WebSecurityConfigurerAdapter{
         web.ignoring()
                 .antMatchers("/favor.ico");
     }
+
 	@Autowired
 	ThymeleafViewResolver thymeleafViewResolver;
 
